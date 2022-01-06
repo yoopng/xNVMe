@@ -544,6 +544,14 @@ xnvme_opts_default
 .. doxygenfunction:: xnvme_opts_default
 
 
+.. _sec-c-api-xnvme-func-xnvme_queue_drain:
+
+xnvme_queue_drain
+-----------------
+
+.. doxygenfunction:: xnvme_queue_drain
+
+
 .. _sec-c-api-xnvme-func-xnvme_queue_get_capacity:
 
 xnvme_queue_get_capacity
@@ -606,14 +614,6 @@ xnvme_queue_term
 ----------------
 
 .. doxygenfunction:: xnvme_queue_term
-
-
-.. _sec-c-api-xnvme-func-xnvme_queue_wait:
-
-xnvme_queue_wait
-----------------
-
-.. doxygenfunction:: xnvme_queue_wait
 
 
 .. _sec-c-api-xnvme-func-xnvme_timer_bw_pr:
