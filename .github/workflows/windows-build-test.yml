@@ -6,7 +6,7 @@ on:
     branches:
       - master
       - dev
-      - build_test
+      - ci-build-windows
     tags:
       - v*
 
@@ -23,7 +23,7 @@ jobs:
   # a recent enough version of git do pull down the modules
   #
   source-archive-gen:
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
 
     steps:
     - name: Grab source
@@ -36,15 +36,15 @@ jobs:
 
     - name: Generate Full Source Archive
       run: |
-        pip install git-archive-all
-        make gen-src-archive
-
+        sudo ./scripts/pkgs/ubuntu-focal.sh
+        make clobber gen-src-archive
 
     - name: Upload source archive
       uses: actions/upload-artifact@v2
       with:
         name: archive-src
-        path: build/*.src.tar.gz
+        path: builddir/meson-dist/*.tar.gz
+
 
   # Build the source-archive on Windows
   windows-build:
@@ -55,6 +55,7 @@ jobs:
       matrix:
         runner:
           - { os: 'windows', ver: '2019' }
+          - { os: 'windows', ver: '2022' }
 
     steps:
     - name: Image-prep, get the full-source-archive
@@ -62,16 +63,19 @@ jobs:
       with:
         name: archive-src
 
+    - name: Prepare Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
     - name: Unpack the full-source-archive
       run: |
-        ls
-        7z x *.src.tar.gz -so | 7z x -ttar -si -aoa
-        rm *.src.tar.gz
-        mv xnvme-* xnvme
+        tar xzf xnvme*.tar.gz --strip 1
+        rm xnvme*.tar.gz
 
     - name: Install build-requirements
       run: |
-        cd xnvme
+        pip3 install meson ninja
         cmd.exe /c "echo %cd%"
         cmd.exe /c "scripts\pkgs\${{ matrix.runner.os }}-${{ matrix.runner.ver }}.bat"
 
@@ -79,7 +83,6 @@ jobs:
 
     - name: Build!
       run: |
-        cd xnvme
         cmd.exe /c "build.bat"
 
     - name: Dump the compile-commands and machine
@@ -112,7 +115,6 @@ jobs:
         set "PATH=%SystemDrive%\tools\msys64;!PATH!"
         set "PATH=%ProgramFiles%\LLVM\bin;!PATH!"
 
-        cd xnvme
         %SH% -c "make install"
 
     - name: Execute xnvme commands
