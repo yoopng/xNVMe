@@ -7,6 +7,7 @@
 #include <libxnvme_nvm.h>
 #include <xnvme_be.h>
 #include <xnvme_dev.h>
+#include <libxnvme_spec_fs.h>
 
 int
 xnvme_adm_format(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint8_t lbaf, uint8_t zf, uint8_t mset,
@@ -77,6 +78,19 @@ xnvme_nvm_write(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint64_t slba, uint16_
 	ctx->cmd.nvm.nlb = nlb;
 
 	return xnvme_cmd_pass(ctx, cdbuf, dbuf_nbytes, cmbuf, mbuf_nbytes);
+}
+
+int
+xnvme_nvm_writev(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint64_t slba, struct iovec *dvec, size_t dvec_cnt, size_t dvec_nbytes)
+{
+	size_t mvec_nbytes = 0;
+	size_t mvec_cnt = 0;
+	
+	ctx->cmd.common.opcode = XNVME_SPEC_FS_OPC_WRITE;
+	ctx->cmd.common.nsid = nsid;
+	ctx->cmd.nvm.slba = slba;
+
+	return xnvme_cmd_passv(ctx, dvec, dvec_cnt, dvec_nbytes, NULL, mvec_cnt, mvec_nbytes);
 }
 
 int
