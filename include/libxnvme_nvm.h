@@ -46,7 +46,7 @@ xnvme_nvm_read(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint64_t slba, uint16_t
  */
 int
 xnvme_nvm_write(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint64_t slba, uint16_t nlb,
-		const void *dbuf, const void *mbuf);
+		const void *dbuf, const void *mbuf); 
 int
 xnvme_nvm_writev(struct xnvme_cmd_ctx *ctx, uint32_t nsid, uint64_t slba, 
 		struct iovec *dvec, size_t dvec_cnt, size_t dvec_nbytes);
